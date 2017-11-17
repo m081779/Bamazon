@@ -1,8 +1,10 @@
+//dependencies
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
 const colors = require('colors');
 
+//creating mysql connection
 const connection = mysql.createConnection({
 	host: 'localhost',
 	port: 3306,
@@ -14,7 +16,11 @@ const connection = mysql.createConnection({
 connection.connect( err => {
 	if ( err ) throw err;
 	start();
-})
+});
+
+
+//start function lets user choose what action to take and then routes them to the 
+//correct function that will handle their response.
 function start() {
 	console.log('Welcome to Bamazon inventory management system (Manager view).'.bold.cyan)
 	inquirer
@@ -31,13 +37,14 @@ function start() {
 		} else if (res.action.includes('low inventory')) {
 			lowInventory();
 		} else if (res.action.includes('Add to inventory')) {
-			addToStock();
+			addToInventory();
 		} else if (res.action.includes('new product')) {
-			addProduct();
+			newProduct();
 		}
 	});
 }
 
+//function checks to see if they want to keep using the program
 function newAction() {
 	inquirer
 	.prompt([
@@ -48,7 +55,7 @@ function newAction() {
 		default: true
 	}
 	]).then( res => {
-		if (res.tryAgain) {
+		if ( res.tryAgain ) {
 			start();
 		} else {
 			console.log("Thank you for using Bamazon inventory management system.  We value our managers more than your pay would suggest.".bold.cyan);
@@ -57,6 +64,7 @@ function newAction() {
 	});
 }
 
+//function queries the database and returns a table of products to display
 function viewProducts(){
 	connection.query("SELECT * FROM products;", ( err, res ) => {
 		if ( err ) throw err;
@@ -72,22 +80,29 @@ function viewProducts(){
 	});
 }
 
+//function queries the database for all items with less than 5 stock_quantity
+//and returns them in a table.  If no items are returned, a message is displayed
 function lowInventory() {
 	connection.query("SELECT * FROM products WHERE stock_quantity<5;", ( err, res ) => {
 		if ( err ) throw err;
-		let table = new Table({
-		    head: ['Item ID'.bold.cyan, 'Product Name'.bold.cyan, 'Price'.bold.cyan, 'Quantity available'.bold.cyan],
-		    colWidths: [10, 25, 10, 20]
-		});
-		for ( let i = 0; i < res.length; i++ ) {
-				table.push([res[i].item_id, res[i].product_name, '$'+res[i].price, res[i].stock_quantity]);
+		if (res.length>0) {
+			let table = new Table({
+			    head: ['Item ID'.bold.cyan, 'Product Name'.bold.cyan, 'Price'.bold.cyan, 'Quantity available'.bold.cyan],
+			    colWidths: [10, 25, 10, 20]
+			});
+			for ( let i = 0; i < res.length; i++ ) {
+					table.push([res[i].item_id, res[i].product_name, '$'+res[i].price, res[i].stock_quantity]);
+			} 
+			console.log(table.toString());
+		} else {
+			console.log('There are no items to display')
 		} 
-		console.log(table.toString());
-		newAction();
+			newAction();
 	});
 } 
 
-function addToStock() {
+//function that allows user to add to the quantity of an item.
+function addToInventory() {
 	connection.query("SELECT * FROM products;", ( err, res ) => {
 		if ( err ) throw err;
 		let table = new Table({
@@ -105,7 +120,7 @@ function addToStock() {
 			name: 'id',
 			message: 'Enter the id number for the product you would like to add to:',
 			validate: int => {
-				if (/\D/.test(int) || int<=0 || int>res.length) {
+				if ( /\D/.test(int) || int <= 0 || int > res.length ) {
 					console.log(`  Please enter a whole number between 1 and ${res.length}`.bold.cyan)
 					return false;
 				} else {
@@ -118,7 +133,7 @@ function addToStock() {
 			name: 'quantity',
 			message: 'Enter the number of products you would like to add:',
 			validate: int => {
-				if (/\D/.test(int) || int<=0 ) {
+				if (/\D/.test(int) || int <= 0 ) {
 					console.log(`  Please enter a whole number greater than zero.`.bold.cyan)
 					return false;
 				} else {
@@ -152,7 +167,7 @@ function addToStock() {
 						}
 						]).then( res => {
 							if ( res.updateItem ) {
-								addToStock();
+								addToInventory();
 							} else {
 								newAction();
 							}
@@ -160,13 +175,14 @@ function addToStock() {
 				});
 			} else {
 				console.log('That number isn\'t a valid product id.  Please try again.'.bold.cyan);
-				addToStock();
+				addToInventory();
 			}
 		});//end of 'then' function
 	});//end of mysql query
-}//end of addToStock function
+}//end of addToInventory function
 
-function addProduct() {
+//function that allows user to add a new product to the inventory, in a particular department
+function newProduct() {
 	connection.query('SELECT * FROM departments;', ( err,res ) => {
 		if ( err ) throw err;
 		inquirer
@@ -206,7 +222,7 @@ function addProduct() {
 			name: 'quantity',
 			message: 'How many of this item will we have in stock?',
 			validate: int => {
-					if (/\D/.test(int) || int<=0) {
+					if (/\D/.test(int) || int <= 0) {
 						console.log(`  Please enter a whole number greater than zero`.bold.cyan);
 						return false;
 					} else {
@@ -245,7 +261,7 @@ function addProduct() {
 						}
 						]).then( res => {
 							if ( res.addItem ) {
-								addProduct();
+								newProduct();
 							} else {
 								newAction();
 							}
@@ -263,14 +279,14 @@ function addProduct() {
 					}
 					]).then( res => {
 						if (res.addItem) {
-							addProduct();
+							newProduct();
 						} else {
 							newAction();
 						}
 					});
 				}
 			});
-		});
-	});
-}
+		});//end of 'then' method
+	});//end of mysql query
+}//end of newProduct function
 

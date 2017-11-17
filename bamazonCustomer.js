@@ -1,13 +1,17 @@
+//dependencies
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
 const colors = require('colors');
+
+//global variables
 let chosenItem;
 let remainingQuantity = 0;
 let productSales = 0;
 let subTotal = 0;
 let custTotal = 0;
 
+//creating mysql connection
 const connection = mysql.createConnection({
 	host: 'localhost',
 	port: 3306,
@@ -16,11 +20,16 @@ const connection = mysql.createConnection({
 	database: 'bamazon'
 });
 
-connection.connect(function (err) {
+connection.connect( err => {
 	if (err) throw err;
 	start();
 });
 
+
+//function that queries the database, displays a table of available items
+//and prompts the user to select an item in the quantity they want purchase.
+//also updates the stock quantity after the sale and logs the product sales
+//to the database for Supervisor review.
 function start() {
 	console.log('Welcome customer!  Take a look at our inventory:'.bold.cyan);
 	connection.query("SELECT * FROM products;", ( err, res ) => {
@@ -39,7 +48,7 @@ function start() {
 			type: 'input',
 			name: 'id',
 			message: 'Enter the ID number of the item you would like to buy...',
-			validate: function( int ) {
+			validate: int => {
 				if ( /\D/.test(int) || int <= 0 || int  >res.length ) {
 					console.log(`  Please enter a whole number between 1 and ${res.length}`.bold.cyan)
 					return false;
@@ -52,7 +61,7 @@ function start() {
 			type: 'input',
 			name: 'quantity',
 			message: 'How many of that item would you like to buy?',
-			validate: function( int ) {
+			validate: int => {
 				if ( /\D/.test(int) || int <= 0 ) {
 					console.log(`  Please enter a whole number greater than zero.`.bold.cyan)
 					return false;
@@ -61,8 +70,8 @@ function start() {
 				}
 			}
 		}
-		]).then(( response ) => {
-			chosenItem = function () {
+		]).then( response => {
+			chosenItem =  () => {
 				for ( let i = 0; i < res.length; i++ ) {
 					if ( res[i].item_id === parseInt( response.id ) ) {
 						return res[i];
@@ -88,6 +97,7 @@ function start() {
 	});//end of mysql query
 } //end of start function
 
+//function to check if the user would like to buy more items
 function buyMore() {
 	inquirer
 	.prompt([
@@ -107,6 +117,8 @@ function buyMore() {
 	});
 }
 
+
+//function that updates the stock quantity and product sales categories on the DB.
 function updateStock() {
 	connection.query("UPDATE products SET ? WHERE ?", 
 		[{stock_quantity: remainingQuantity, product_sales: productSales }, {item_id: chosenItem().item_id}],

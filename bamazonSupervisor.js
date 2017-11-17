@@ -1,8 +1,10 @@
+//dependencies
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
 const colors = require('colors');
 
+//creating mysql connection
 const connection = mysql.createConnection({
 	host: 'localhost',
 	port: 3306,
@@ -16,6 +18,8 @@ connection.connect( err => {
 	start();
 });
 
+//start function lets user choose what action to take and then routes them to the 
+//correct function that will handle their response.
 function start() {
 	console.log('Welcome to Bamazon inventory management system (Supervisor view).'.bold.cyan)
 	inquirer
@@ -35,6 +39,7 @@ function start() {
 	});
 }
 
+//function checks to see if they want to keep using the program
 function newAction() {
 	inquirer
 	.prompt([
@@ -54,6 +59,8 @@ function newAction() {
 	});
 }
 
+//function that queries the database and returns a table that is a result of an inner join
+//of products and departments
 function viewSales() {	
 	connection.query("SELECT products.product_sales, departments.department_name, departments.department_id, departments.over_head_costs, SUM(products.product_sales) as product_sales "+
 					"FROM products "+
@@ -74,6 +81,8 @@ function viewSales() {
 	});	
 }
 
+//function that allows a user to create a new department and assign a value for
+//overhead costs
 function createDept() {
 	inquirer
 	.prompt([
