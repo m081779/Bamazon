@@ -8,4 +8,4 @@
 	* cli-table
 	* colors
 
-![Image of customer view](https://m081779.github.com/images/img1.png)
+![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img1.png)
