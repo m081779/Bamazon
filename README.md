@@ -22,17 +22,17 @@ __Customers can purchase items by selecting them by their item id number and qua
 
 __Inventory managers can view inventory, see which items have low quantity, add stock of existing items, or add new items to the database:__
 
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img5.png)
+![Image of manager view](https://github.com/m081779/Bamazon/blob/master/images/img5.png)
 
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img2.png)
+![Image of manager view](https://github.com/m081779/Bamazon/blob/master/images/img2.png)
 
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img7.png)
+![Image of manager view](https://github.com/m081779/Bamazon/blob/master/images/img7.png)
 
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img7.png)
+![Image of manager view](https://github.com/m081779/Bamazon/blob/master/images/img7.png)
 
 
 
 __Supervisors have the highest level of access, and can view revenue/overhead by department, and add departments:__
 
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img3.png)
-![Image of customer view](https://github.com/m081779/Bamazon/blob/master/images/img4.png)
+![Image of supervisor view](https://github.com/m081779/Bamazon/blob/master/images/img3.png)
+![Image of supervisor view](https://github.com/m081779/Bamazon/blob/master/images/img4.png)
