@@ -10,7 +10,7 @@ To view a video on how the program works, [click here.](http://google.com)
 	* cli-table - a package that creates tables for CLI programs
 	* colors - a package that allows text colors to be displayed in CLI programs
 
-##The program consists of three files that provide access to the same database with differing actions available for customers, managers, and supervisors.
+## The program consists of three files that provide access to the same database with differing actions available for customers, managers, and supervisors.
 
 
 
