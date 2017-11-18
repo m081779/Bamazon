@@ -1,6 +1,6 @@
 # _Bamazon_ inventory management system
 
-To view a video on how the program works, [click here.](http://google.com)
+## To view a video on how the program works, [click here.](http://google.com)
 
 ## Featured technologies:
 * Node.js
